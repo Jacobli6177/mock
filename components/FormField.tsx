@@ -3,7 +3,6 @@ import {
   FormItem,
   FormLabel,
   FormControl,
-  FormDescription,
   FormMessage
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
@@ -31,11 +30,8 @@ const FormField = <T extends FieldValues>({
       <FormItem>
         <FormLabel className='label'>{label}</FormLabel>
         <FormControl>
-          <Input type={type} placeholder={placeholder} {...field} />
+          <Input className="input" type={type} placeholder={placeholder} {...field} />
         </FormControl>
-        <FormDescription>
-          This is your public display name.
-        </FormDescription>
         <FormMessage />
       </FormItem>
     )}
