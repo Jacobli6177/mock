@@ -3,6 +3,8 @@ import { dummyInterviews } from '@/constants'
 import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
+import InterviewCard from '@/components/InterviewCard' // or the correct path
+
 
 const page = () => {
   return (
@@ -33,7 +35,7 @@ const page = () => {
           <h2> Take an Interview</h2>
           <div className='interviews-section'>
             {dummyInterviews.map((interview) => (
-              <InterviewCard {...interview}/>
+              <InterviewCard {...interview} key = {interview.id}/>
             ))}
             <p> YOu havent taken any interview yet</p>
           </div>
