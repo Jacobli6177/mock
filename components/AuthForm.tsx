@@ -12,9 +12,9 @@ import { Button } from '@/components/ui/button'
 import { Form } from '@/components/ui/form'
 import { toast } from 'sonner'
 import FormField from './FormField'
-import { createUserWithEmailAndPassword } from 'firebase/auth'
-import { auth } from '@/firebase/admin'
-import { signUp } from '@/lib/actions/auth..action' // ✅ fix double-dot typo
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth'
+import { auth } from '@/firebase/client'
+import { signUp, signIn } from '@/lib/actions/auth..action' 
 
 type FormType = 'sign-in' | 'sign-up'
 
@@ -59,7 +59,25 @@ const AuthForm = ({ type }: { type: FormType }) => {
 
         toast.success('Account created successfully. Please sign in.')
         router.push('/sign-in')
+
       } else {
+        const { email, password } = values
+        const userCredentials = await signInWithEmailAndPassword(auth, email, password);
+
+        const idToken = await userCredentials.user.getIdToken();
+
+        if (!idToken) {
+          toast.error('Sign in failed')
+          return;
+        }
+
+        await signIn({
+          email, idToken
+        })
+
+        toast.success('Sign in successfully.');
+        router.push('/')
+
         toast.success('Signed in successfully.')
         router.push('/')
       }

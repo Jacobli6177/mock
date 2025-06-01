@@ -31,7 +31,7 @@ export async function signUp(params: SignUpParams) {
 
     return {
       success: true,
-      message: 'Account created successfully.',
+      message: 'Account created successfully. Please sign in',
     };
   } catch (e: unknown) {
     console.error('Error creating a user', e);
