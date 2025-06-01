@@ -14,16 +14,16 @@ import { toast } from 'sonner'
 import FormField from './FormField'
 import { createUserWithEmailAndPassword } from 'firebase/auth'
 import { auth } from '@/firebase/admin'
+import { signUp } from '@/lib/actions/auth.action' // ✅ fix double-dot typo
 
 type FormType = 'sign-in' | 'sign-up'
 
-const authFormSchema = (type: FormType) => {
-  return z.object({
+const authFormSchema = (type: FormType) =>
+  z.object({
     name: type === 'sign-up' ? z.string().min(3, 'Name must be at least 3 characters') : z.string().optional(),
     email: z.string().email('Invalid email address'),
     password: z.string().min(3, 'Password must be at least 3 characters'),
   })
-}
 
 const AuthForm = ({ type }: { type: FormType }) => {
   const router = useRouter()
@@ -38,24 +38,35 @@ const AuthForm = ({ type }: { type: FormType }) => {
     },
   })
 
-  async function onSubmit(values: z.infer<typeof formSchema>) => {
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       if (type === 'sign-up') {
-        const {name, email, password} = values; 
+        const { name, email, password } = values
 
-        const userCredientials = await createUserWithEmailAndPassword(auth, email, password) 
+        const userCredentials = await createUserWithEmailAndPassword(auth, email, password)
+
+        const result = await signUp({
+          uid: userCredentials.user.uid,
+          name: name!,
+          email,
+          password,
+        })
+
+        if (!result?.success) {
+          toast.error(result?.message)
+          return
+        }
 
         toast.success('Account created successfully. Please sign in.')
         router.push('/sign-in')
       } else {
-        toast.success('Sign in successfully.')
+        toast.success('Signed in successfully.')
         router.push('/')
       }
     } catch (error) {
-      console.log(error)
-      toast.error(`There was an error: ${error}`)
+      console.error(error)
+      toast.error(`There was an error: ${String(error)}`)
     }
-    console.log(values)
   }
 
   const isSignIn = type === 'sign-in'
@@ -105,10 +116,10 @@ const AuthForm = ({ type }: { type: FormType }) => {
         <p className='text-center'>
           {isSignIn ? 'No account yet?' : 'Have an account already?'}
           <Link
-            href={!isSignIn ? '/sign-in' : '/sign-up'}
+            href={isSignIn ? '/sign-up' : '/sign-in'}
             className='font-bold text-user-primary ml-1'
           >
-            {!isSignIn ? 'Sign In' : 'Sign Up'}
+            {isSignIn ? 'Sign Up' : 'Sign In'}
           </Link>
         </p>
       </div>
