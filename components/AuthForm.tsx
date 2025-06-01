@@ -14,7 +14,7 @@ import { toast } from 'sonner'
 import FormField from './FormField'
 import { createUserWithEmailAndPassword } from 'firebase/auth'
 import { auth } from '@/firebase/admin'
-import { signUp } from '@/lib/actions/auth.action' // ✅ fix double-dot typo
+import { signUp } from '@/lib/actions/auth..action' // ✅ fix double-dot typo
 
 type FormType = 'sign-in' | 'sign-up'
 
